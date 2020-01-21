@@ -16,15 +16,15 @@ namespace Liip\FunctionalTestBundle;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler\CompilerDebugDumpPass;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\BrowserKit\AbstractBrowser;
 
 // Symfony <4 BC
 if (class_exists(CompilerDebugDumpPass::class)) {
     class_alias(QueryCountClientSymfony3Trait::class, QueryCountClientTrait::class);
 }
 
-// Symfony <4.3.1 BC
-if (!class_exists(KernelBrowser::class)) {
-    class_alias(Client::class, KernelBrowser::class);
+if (!class_exists(Client::class)) {
+    class_alias(Client::class, AbstractBrowser::class);
 }
 
 class QueryCountClient extends KernelBrowser

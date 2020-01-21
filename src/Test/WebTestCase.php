@@ -18,6 +18,7 @@ use PHPUnit\Framework\MockObject\MockBuilder;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
+use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -28,6 +29,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserInterface;
+
+if (!class_exists(Client::class)) {
+    class_alias(Client::class, AbstractBrowser::class);
+}
 
 /**
  * @author Lea Haensenberger
@@ -243,9 +248,9 @@ abstract class WebTestCase extends BaseWebTestCase
      *
      * @param array $params
      *
-     * @return Client
+     * @return AbstractBrowser
      */
-    protected function makeClient(array $params = []): Client
+    protected function makeClient(array $params = []): AbstractBrowser
     {
         return $this->createClientWithParams($params);
     }
@@ -259,9 +264,9 @@ abstract class WebTestCase extends BaseWebTestCase
      *
      * @param array $params
      *
-     * @return Client
+     * @return AbstractBrowser
      */
-    protected function makeAuthenticatedClient(array $params = []): Client
+    protected function makeAuthenticatedClient(array $params = []): AbstractBrowser
     {
         $username = $this->getContainer()
             ->getParameter('liip_functional_test.authentication.username');
@@ -283,9 +288,9 @@ abstract class WebTestCase extends BaseWebTestCase
      * @param string $password
      * @param array  $params
      *
-     * @return Client
+     * @return AbstractBrowser
      */
-    protected function makeClientWithCredentials(string $username, string $password, array $params = []): Client
+    protected function makeClientWithCredentials(string $username, string $password, array $params = []): AbstractBrowser
     {
         return $this->createClientWithParams($params, $username, $password);
     }
@@ -405,9 +410,9 @@ abstract class WebTestCase extends BaseWebTestCase
      * information.
      *
      * @param int    $expectedStatusCode
-     * @param Client $client
+     * @param AbstractBrowser $client
      */
-    public static function assertStatusCode(int $expectedStatusCode, Client $client): void
+    public static function assertStatusCode(int $expectedStatusCode, AbstractBrowser $client): void
     {
         HttpAssertions::assertStatusCode($expectedStatusCode, $client);
     }
@@ -439,7 +444,7 @@ abstract class WebTestCase extends BaseWebTestCase
         parent::tearDown();
     }
 
-    protected function createClientWithParams(array $params, ?string $username = null, ?string $password = null): Client
+    protected function createClientWithParams(array $params, ?string $username = null, ?string $password = null): AbstractBrowser
     {
         if ($username && $password) {
             $params = array_merge($params, [

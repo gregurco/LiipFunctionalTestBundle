@@ -14,31 +14,31 @@ declare(strict_types=1);
 namespace Liip\FunctionalTestBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final class ExceptionListener implements EventSubscriberInterface
 {
     /**
-     * @var \Exception|null
+     * @var \Throwable|null
      */
     private $lastException;
 
-    public function setException(GetResponseForExceptionEvent $event): void
+    public function setException(ExceptionEvent $event): void
     {
-        $this->lastException = $event->getException();
+        $this->lastException = $event->getThrowable();
     }
 
-    public function clearLastException(GetResponseEvent $event): void
+    public function clearLastException(RequestEvent $event): void
     {
         if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType()) {
             $this->lastException = null;
         }
     }
 
-    public function getLastException(): ?\Exception
+    public function getLastException(): ?\Throwable
     {
         return $this->lastException;
     }

@@ -37,6 +37,8 @@ class ParatestCommandTest extends WebTestCase
      */
     public function testParatest(): void
     {
+        $this->markTestSkipped();
+
         $kernel = $this->getContainer()->get('kernel');
         $application = new Application($kernel);
         $application->setAutoExit(false);
